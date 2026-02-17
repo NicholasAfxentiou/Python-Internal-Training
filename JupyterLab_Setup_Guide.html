@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JupyterLab Setup Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px;
+            padding-left: 80px;
+            padding-bottom: 80px;
+            background: white;
+            border-radius: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 1200px;
+            width: 90%;
+            max-height: calc(90vh - 60px);
+            overflow-y: auto;
+            animation: fadeIn 0.5s;
+            position: relative;
+            margin-bottom: 60px;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: #3a9d5f;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #50606D;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+
+        h2 {
+            color: #3a9d5f;
+            font-size: 2em;
+            margin: 20px 0;
+            font-weight: normal;
+        }
+
+        h3 {
+            color: #555;
+            font-size: 1.5em;
+            margin: 15px 0;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        ul, ol {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin: 15px 0 15px 30px;
+        }
+
+        ol {
+            list-style: none;
+            counter-reset: step-counter;
+            padding-left: 0;
+        }
+
+        ol li {
+            counter-increment: step-counter;
+            margin: 8px 0;
+        }
+
+        ol li .step-number {
+            display: inline-block;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #50606D;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .key-point {
+            background: #f0f9f4;
+            border-left: 4px solid #3a9d5f;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #3a9d5f;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .slide-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #50606D;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 999;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #50606D;
+        }
+
+        .logo-header {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .logo-header img {
+            height: 50px;
+            width: auto;
+            max-width: 200px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background: white;
+            border: 2px solid #3a9d5f;
+            color: #3a9d5f;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #3a9d5f;
+            color: white;
+        }
+
+        .screenshot-placeholder {
+            background: #e9ecef;
+            border: 2px dashed #50606D;
+            padding: 40px;
+            text-align: center;
+            border-radius: 5px;
+            margin: 15px 0;
+            color: #666;
+        }
+
+        a {
+            color: #3a9d5f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-header">
+        <img src="https://static.wixstatic.com/media/55b627_e0213c85c7a44421a1a0739381374639~mv2.png/v1/crop/x_0,y_64,w_2000,h_833/fill/w_261,h_109,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/serg-logo-transparent.png" alt="SERG Logo">
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">14</span>
+    </div>
+
+    <div class="slideshow-container">
+        <!-- Slide 1 -->
+        <div class="slide active">
+            <h1>JupyterLab Setup Guide</h1>
+            <h2>Getting Ready for Python Data Visualization Course</h2>
+            <div class="key-point" style="margin-top: 40px;">
+                <p style="font-size: 1.3em;">This guide will help you:</p>
+                <ul style="font-size: 1.1em; margin-top: 15px;">
+                    <li>Access JupyterLab online (jupyter.org/try)</li>
+                    <li>Or install JupyterLab locally</li>
+                    <li>Set up your environment</li>
+                    <li>Organize your workspace</li>
+                    <li>Install required libraries</li>
+                    <li>Prepare for the course</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+            <h1>What is JupyterLab?</h1>
+            <p style="font-size: 1.3em; margin: 30px 0;">JupyterLab is an interactive development environment for working with Python notebooks.</p>
+            <h3>Why JupyterLab?</h3>
+            <ul style="font-size: 1.1em;">
+                <li><strong>Interactive:</strong> Run code cell by cell</li>
+                <li><strong>Visual:</strong> See results immediately</li>
+                <li><strong>Educational:</strong> Perfect for learning</li>
+                <li><strong>Documentation:</strong> Combine code, text, and visualizations</li>
+            </ul>
+            <div class="key-point" style="margin-top: 30px;">
+                <p><strong>Think of it as:</strong> A notebook where you can write code, see results, and take notes all in one place!</p>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <h1>Option 1: JupyterLab Online</h1>
+            <h2>Using jupyter.org/try (Recommended for Beginners)</h2>
+            <ol style="font-size: 1.1em;">
+                <li><span class="step-number">1</span>Go to <a href="https://jupyter.org/try" target="_blank">jupyter.org/try</a></li>
+                <li><span class="step-number">2</span>Click on "Launch JupyterLab demo"</li>
+                <li><span class="step-number">3</span>Wait for JupyterLab to load in your browser</li>
+                <li><span class="step-number">4</span>You're ready to code!</li>
+            </ol>
+            <div class="key-point" style="margin-top: 30px;">
+                <p><strong>Advantages:</strong> No installation needed, free, runs in your browser, perfect for trying JupyterLab</p>
+            </div>
+            <div class="warning" style="margin-top: 20px;">
+                <p><strong>Note:</strong> This is an experimental demo. For persistent work, consider local installation.</p>
+            </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="slide">
+            <h1>Option 2: Local Installation</h1>
+            <h2>Install JupyterLab on Your Computer</h2>
+            <h3>Step 1: Install Python</h3>
+            <ol style="font-size: 1.1em;">
+                <li>Download Python 3.7+ from <a href="https://www.python.org/downloads/" target="_blank">python.org</a></li>
+                <li>During installation, check <strong>"Add Python to PATH"</strong></li>
+                <li>Complete the installation</li>
+            </ol>
+            <h3 style="margin-top: 30px;">Step 2: Install JupyterLab</h3>
+            <p style="margin: 10px 0;">Open Terminal (Mac/Linux) or Command Prompt (Windows) and run:</p>
+            <pre><code>pip install jupyterlab</code></pre>
+            <h3 style="margin-top: 20px;">Step 3: Launch JupyterLab</h3>
+            <pre><code>jupyter lab</code></pre>
+            <div class="key-point" style="margin-top: 20px;">
+                <p>This will open JupyterLab in your web browser automatically at <code>http://localhost:8888</code></p>
+            </div>
+            <div class="key-point" style="margin-top: 15px;">
+                <p><strong>Advantages:</strong> Full control, persistent files, works offline, better for long-term projects</p>
+            </div>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="slide">
+            <h1>Setting Up Your Workspace</h1>
+            <h2>Organize Your Files</h2>
+            <h3>Recommended Folder Structure:</h3>
+            <pre><code>python-course/
+├── notebooks/
+│   └── Python_Data_Visualization_Course.ipynb
+├── data/
+│   └── sensor_data.csv
+└── outputs/
+    └── (your charts will be saved here)</code></pre>
+            <div class="key-point" style="margin-top: 20px;">
+                <p><strong>Tip:</strong> Keep your data files in a separate folder for easy access</p>
+            </div>
+        </div>
+
+        <!-- Slide 7 -->
+        <div class="slide">
+            <h1>Setting Up Folder Paths</h1>
+            <h2>For JupyterLab Online (jupyter.org/try)</h2>
+            <h3>Upload Dataset:</h3>
+            <ol style="font-size: 1.1em;">
+                <li>Click the folder icon (📁) in the left sidebar</li>
+                <li>Drag and drop <code>sensor_data.csv</code> into the file browser</li>
+                <li>Or right-click and select "Upload"</li>
+                <li>Wait for upload to complete</li>
+            </ol>
+            <h3 style="margin-top: 30px;">Access in Code:</h3>
+            <pre><code># Files are in the root directory
+df = pd.read_csv("sensor_data.csv")</code></pre>
+            <div class="warning" style="margin-top: 20px;">
+                <p><strong>Note:</strong> Files uploaded to the online demo are temporary. Download your work!</p>
+            </div>
+        </div>
+
+        <!-- Slide 8 -->
+        <div class="slide">
+            <h1>Setting Up Folder Paths</h1>
+            <h2>For Local JupyterLab</h2>
+            <h3>Option 1: Relative Path (Recommended)</h3>
+            <pre><code># If your notebook and data are in the same folder
+df = pd.read_csv("sensor_data.csv")
+
+# If data is in a subfolder
+df = pd.read_csv("data/sensor_data.csv")</code></pre>
+            <h3 style="margin-top: 30px;">Option 2: Absolute Path</h3>
+            <pre><code># Windows example
+df = pd.read_csv("C:/Users/YourName/data/sensor_data.csv")
+
+# Mac/Linux example
+df = pd.read_csv("/Users/YourName/data/sensor_data.csv")</code></pre>
+            <div class="key-point" style="margin-top: 20px;">
+                <p><strong>Best Practice:</strong> Use relative paths - easier to share and move projects</p>
+            </div>
+        </div>
+
+        <!-- Slide 9 -->
+        <div class="slide">
+            <h1>Installing Required Libraries</h1>
+            <h2>What You Need</h2>
+            <p style="font-size: 1.2em; margin: 20px 0;">For this course, you'll need:</p>
+            <ul style="font-size: 1.1em;">
+                <li><strong>pandas</strong> - Data manipulation</li>
+                <li><strong>numpy</strong> - Numerical computing</li>
+                <li><strong>matplotlib</strong> - Basic plotting</li>
+                <li><strong>seaborn</strong> - Statistical visualizations</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10 -->
+        <div class="slide">
+            <h1>Installing Libraries</h1>
+            <h2>In JupyterLab Online (jupyter.org/try)</h2>
+            <p style="font-size: 1.2em; margin: 20px 0;">Try importing first - some libraries may be pre-installed:</p>
+            <pre><code>import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns</code></pre>
+            <h3 style="margin-top: 30px;">If a library is missing, install it:</h3>
+            <pre><code># Install in JupyterLab
+!pip install pandas numpy matplotlib seaborn</code></pre>
+            <div class="key-point" style="margin-top: 20px;">
+                <p><strong>Note:</strong> The <code>!</code> runs shell commands in the notebook</p>
+            </div>
+            <div class="warning" style="margin-top: 15px;">
+                <p><strong>Note:</strong> Installations in the online demo are temporary. For persistent setup, use local installation.</p>
+            </div>
+        </div>
+
+        <!-- Slide 11 -->
+        <div class="slide">
+            <h1>Installing Libraries</h1>
+            <h2>In Local JupyterLab</h2>
+            <h3>Method 1: Using pip in Terminal</h3>
+            <p style="margin: 15px 0;">Open Terminal/Command Prompt and run:</p>
+            <pre><code>pip install pandas numpy matplotlib seaborn</code></pre>
+            <h3 style="margin-top: 30px;">Method 2: Install in Notebook</h3>
+            <p style="margin: 15px 0;">Run this in a code cell:</p>
+            <pre><code>import sys
+!{sys.executable} -m pip install pandas numpy matplotlib seaborn</code></pre>
+            <div class="warning" style="margin-top: 20px;">
+                <p><strong>Note:</strong> Restart the kernel after installing libraries</p>
+            </div>
+        </div>
+
+        <!-- Slide 12 -->
+        <div class="slide">
+            <h1>Verify Installation</h1>
+            <h2>Test Your Setup</h2>
+            <p style="font-size: 1.2em; margin: 20px 0;">Run this code to verify everything works:</p>
+            <pre><code># Import libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Check versions
+print(f"pandas version: {pd.__version__}")
+print(f"numpy version: {np.__version__}")
+print(f"matplotlib version: {plt.matplotlib.__version__}")
+print(f"seaborn version: {sns.__version__}")
+
+# Test basic functionality
+print("\n✅ All libraries loaded successfully!")
+print("✅ Your environment is ready!")</code></pre>
+            <div class="key-point" style="margin-top: 20px;">
+                <p>If you see version numbers and success messages, you're all set!</p>
+            </div>
+        </div>
+
+        <!-- Slide 13 -->
+        <div class="slide">
+            <h1>JupyterLab Basics</h1>
+            <h2>How to Use JupyterLab</h2>
+            <h3>Creating a New Notebook:</h3>
+            <ul style="font-size: 1.1em;">
+                <li>Click "File" → "New" → "Notebook"</li>
+                <li>Or click the "+" button in the launcher</li>
+            </ul>
+            <h3 style="margin-top: 30px;">Running Code:</h3>
+            <ul style="font-size: 1.1em;">
+                <li>Click in a code cell</li>
+                <li>Type your code</li>
+                <li>Press <code>Shift + Enter</code> to run</li>
+                <li>Or click the "Run" button</li>
+            </ul>
+            <h3 style="margin-top: 30px;">Cell Types:</h3>
+            <ul style="font-size: 1.1em;">
+                <li><strong>Code:</strong> For Python code</li>
+                <li><strong>Markdown:</strong> For text and documentation</li>
+            </ul>
+        </div>
+
+        <!-- Slide 14 -->
+        <div class="slide">
+            <h1>Quick Tips</h1>
+            <h2>JupyterLab Shortcuts</h2>
+            <ul style="font-size: 1.1em;">
+                <li><code>Shift + Enter</code> - Run cell and move to next</li>
+                <li><code>Ctrl + Enter</code> - Run cell (stay in place)</li>
+                <li><code>A</code> - Insert cell above</li>
+                <li><code>B</code> - Insert cell below</li>
+                <li><code>DD</code> - Delete cell (press D twice)</li>
+                <li><code>M</code> - Change to Markdown cell</li>
+                <li><code>Y</code> - Change to Code cell</li>
+            </ul>
+            <div class="key-point" style="margin-top: 30px;">
+                <p><strong>Pro Tip:</strong> Use Markdown cells to add notes and explanations between code cells!</p>
+            </div>
+        </div>
+
+        <!-- Slide 15 -->
+        <div class="slide">
+            <h1>You're Ready!</h1>
+            <div class="key-point" style="margin-top: 50px;">
+                <p style="font-size: 1.5em;"><strong>Setup Checklist:</strong></p>
+                <ul style="font-size: 1.2em; margin-top: 20px;">
+                    <li>✅ JupyterLab is running (online or local)</li>
+                    <li>✅ Required libraries are installed</li>
+                    <li>✅ Dataset is accessible</li>
+                    <li>✅ You know how to run code cells</li>
+                </ul>
+            </div>
+            <h2 style="margin-top: 50px; color: #3a9d5f;">Next Steps:</h2>
+            <p style="font-size: 1.3em; margin-top: 20px;">Open the course notebook:</p>
+            <pre style="background: #f0f9f4; color: #50606D;"><code>Python_Data_Visualization_Course.ipynb</code></pre>
+            <div class="key-point" style="margin-top: 30px;">
+                <p style="font-size: 1.3em;"><strong>Let's start learning Python for data visualization!</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-footer">
+        <div class="footer-left">
+            <span class="footer-date">6/2/2026</span>
+            <span class="footer-instructor">Dr. Nicholas Afxentiou</span>
+        </div>
+        <div class="footer-right">
+            <span id="footer-slide-number">1</span>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-btn" onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('footer-slide-number').textContent = currentSlide + 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSlide();
+            }
+            if (touchEndX > touchStartX + 50) {
+                previousSlide();
+            }
+        }
+    </script>
+</body>
+</html>
